@@ -71,3 +71,27 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Coreform Code challenge
+
+Your task is to:
+- Call the Invoices API endpoint https://dh7aht0kba.execute-api.ap-southeast-2.amazonaws.com/dev/invoices GET
+- This Invoices API will return 1 or more invoices in a JSON format
+- For each invoice you will need to find in the Fields array the field PO_NUMBER
+- Once you find the field PO_NUMBER get the value of it (The value is on the Item property)
+- Call the Purchase Orders API endpoint by passing the purchase order number as parameter like in the example https://dh7aht0kba.execute-api.ap-southeast-2.amazonaws.com/dev/purchase-orders/purchaseOrderNumberHere
+- This Invoices API will return 1 purchase order in a JSON format
+- The main goal of this task is to compare the invoice lines against the purchase order lines
+- The name of the field that have the lines in the invoice is ITEMS
+- The name of the field that have the lines in the purchase order is LineItems
+- The logic it will be something like this: loop the invoice items then inside of this loop you loop the purchase order lines then you compare if the invoice item code is equals the purchase order StockItem or SupplierPartNo, if they are equal then compare if the invoice item quantity is equal to purchase order line quantity
+
+That is the task.
+Please make sure you clone the repo and also make small commits and give small and clear names to you commit in your repo so I can have a look on your commits later.
+Please let me know if you have any questions.
+
+Thanks
+Tiago
+
+tiago.matos@coreform.co
+0424 126 672
