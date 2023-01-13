@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  private logger = new Logger(AppService.name);
+
+  public getHello(): void {
+    this.logger.log('Logging something here');
   }
 }
