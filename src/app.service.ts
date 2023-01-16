@@ -19,7 +19,7 @@ export class AppService {
     Logger.log('iterating over the array of invoices...');
     jsonInvoices.body.forEach(async function (invoice) {
       Logger.log('getting the PO_NUMBER from the invoice...');
-      let poNumber = invoice.Fields.find((i) => i.FieldName == 'PO_NUMBER');
+      const poNumber = invoice.Fields.find((i) => i.FieldName == 'PO_NUMBER');
       try {
         //check if there is an order
         if (!poNumber) {
@@ -33,17 +33,17 @@ export class AppService {
         );
 
         //List of pruducts (lines/rows) in the invoice
-        let listOfItems = invoice.Fields.find(
+        const listOfItems = invoice.Fields.find(
           (items) => items.FieldName == 'ITEMS',
         ).Item.Row;
 
         //Iterating list of products
         listOfItems.forEach(async function (row) {
-          let codeProductInvoice = row.ColumnValue[0].Item;
-          let jsonPO = purchase_order.data[0];
+          const codeProductInvoice = row.ColumnValue[0].Item;
+          const jsonPO = purchase_order.data[0];
 
           Logger.log('Comparing product with code: ' + codeProductInvoice);
-          let poProductFound = jsonPO.POPurchaseOrder.LineItems.find(
+          const poProductFound = jsonPO.POPurchaseOrder.LineItems.find(
             (codeProductPO) =>
               codeProductPO.StockItem == codeProductInvoice ||
               codeProductPO.SupplierPartNo == codeProductInvoice,
@@ -55,7 +55,7 @@ export class AppService {
             Logger.log('Items code ' + codeProductInvoice + ' match!');
             Logger.log('Comparing quantities...');
 
-            let quantityProductInvoice = parseInt(row.ColumnValue[4].Item);
+            const quantityProductInvoice = parseInt(row.ColumnValue[4].Item);
 
             Logger.log('PO product quantity: ' + poProductFound.Quantity);
             Logger.log('Invoice product quantity: ' + quantityProductInvoice);
