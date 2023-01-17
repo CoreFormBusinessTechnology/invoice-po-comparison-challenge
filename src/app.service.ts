@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { response } from 'express';
+import { ERROR_MESSAGE_ENUM } from './enums/error.enum';
 
 @Injectable()
 export class AppService {
@@ -23,7 +24,7 @@ export class AppService {
       try {
         //check if there is an order
         if (!poNumber) {
-          throw new Error('ERRORMESAGE_PURCHARSE_ORDER_NOT_FOUND');
+          throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_PURCHARSE_ORDER_NOT_FOUND);
         }
         Logger.log('PO_NUMBER: ' + poNumber.Item);
         Logger.log('getting the related Po from the API by PO_NUMBER...');
@@ -33,9 +34,7 @@ export class AppService {
         );
 
         //List of pruducts (lines/rows) in the invoice
-        const listOfItems = invoice.Fields.find(
-          (items) => items.FieldName == 'ITEMS',
-        ).Item.Row;
+        const listOfItems = invoice.Fields.find((items) => items.FieldName == 'ITEMS').Item.Row;
 
         //Iterating list of products
         listOfItems.forEach(async function (row) {
@@ -50,7 +49,7 @@ export class AppService {
           );
           try {
             if (!poProductFound) {
-              throw new Error('ERRORMESAGE_CODE_MISSMATCH');
+              throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_CODE_MISSMATCH);
             }
             Logger.log('Items code ' + codeProductInvoice + ' match!');
             Logger.log('Comparing quantities...');
@@ -61,7 +60,7 @@ export class AppService {
             Logger.log('Invoice product quantity: ' + quantityProductInvoice);
 
             if (poProductFound.Quantity !== quantityProductInvoice) {
-              throw new Error('ERRORMESAGE_QUANTITIES_MISSMATCH');
+              throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_QUANTITIES_MISSMATCH);
             } else {
               Logger.log('Quantities match too!\n');
             }
