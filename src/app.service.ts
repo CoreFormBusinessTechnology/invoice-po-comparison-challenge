@@ -4,8 +4,9 @@ import { ERROR_MESSAGE_ENUM } from './enums/error.enum';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly httpService: HttpService) {}
   public logger = new Logger(AppService.name);
+
+  constructor(private readonly httpService: HttpService) {}
 
   public async compareInvoiceAndPo(): Promise<void> {
     const axios = this.httpService.axiosRef;
@@ -64,16 +65,16 @@ export class AppService {
               this.logger.log('Quantities match too!\n');
             }
           } catch (error) {
-            errorHandler(error);
+            this.errorHandler(error);
           }
         }
       } catch (error) {
-        errorHandler(error);
+        this.errorHandler(error);
       }
     }
   }
-}
 
-function errorHandler(error: any) {
-  this.logger.log('Error in compareInvoiceAndPo: ' + error.message);
+  private errorHandler(error: any) {
+    this.logger.log('Error in compareInvoiceAndPo: ' + error.message);
+  }
 }
