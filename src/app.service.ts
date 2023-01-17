@@ -64,16 +64,16 @@ export class AppService {
               this.logger.log('Quantities match too!\n');
             }
           } catch (error) {
-            ErrorHandler(error);
+            errorHandler(error);
           }
         });
       } catch (error) {
-        ErrorHandler(error);
+        errorHandler(error);
       }
     });
   }
 }
 
-function ErrorHandler(error: any) {
+function errorHandler(error: any) {
   this.logger.log('Error in compareInvoiceAndPo: ' + error.message);
 }
