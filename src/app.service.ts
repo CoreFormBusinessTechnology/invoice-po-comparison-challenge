@@ -11,15 +11,17 @@ export class AppService {
   public async compareInvoiceAndPo(): Promise<void> {
     const axios = this.httpService.axiosRef;
 
-    this.logger.log('getting invoices from the API...');
+    this.logger.log('Getting invoices from the API...');
     const invoices = await axios.get(
       'https://dh7aht0kba.execute-api.ap-southeast-2.amazonaws.com/dev/invoices',
     );
     const jsonInvoices = invoices.data;
 
-    this.logger.log('iterating over the array of invoices...');
+    this.logger.log('Iterating over the array of invoices...');
     for (const invoice of jsonInvoices.body) {
-      this.logger.log('getting the PO_NUMBER from the invoice...');
+      const invoiceNumber = invoice.Fields.find((i) => i.FieldName == 'INVOICE_NUMBER');
+      this.logger.log(`Processing invoice: ${invoiceNumber.Item}`);
+      this.logger.log('Getting the PO_NUMBER from the invoice...');
       const poNumber = invoice.Fields.find((i) => i.FieldName == 'PO_NUMBER');
       try {
         //check if there is an order
@@ -27,7 +29,7 @@ export class AppService {
           throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_PURCHARSE_ORDER_NOT_FOUND);
         }
         this.logger.log('PO_NUMBER: ' + poNumber.Item);
-        this.logger.log('getting the related Po from the API by PO_NUMBER...');
+        this.logger.log('Getting the related Po from the API by PO_NUMBER...');
         const purchase_order = await axios.get(
           'https://dh7aht0kba.execute-api.ap-southeast-2.amazonaws.com/dev/purchase-orders/' +
             poNumber.Item,
@@ -36,16 +38,16 @@ export class AppService {
         //List of pruducts (lines/rows) in the invoice
         const listOfItems = invoice.Fields.find((items) => items.FieldName == 'ITEMS').Item.Row;
 
-        this.logger.log('iterating over the array of po items...');
+        this.logger.log('Iterating over the array of po items...');
         for (const row of listOfItems) {
           const codeProductInvoice = row.ColumnValue[0].Item;
           const jsonPO = purchase_order.data[0];
 
-          this.logger.log('Comparing invoice product with code: ' + codeProductInvoice);
+          this.logger.log(`Comparing invoice product with code: ${codeProductInvoice}`);
           const poProductFound = jsonPO.POPurchaseOrder.LineItems.find((codeProductPO) => {
-            this.logger.log('Comparing vs po product with StockItem: ' + codeProductPO.StockItem);
+            this.logger.log(`Comparing vs po product with StockItem: ${codeProductPO.StockItem}`);
             this.logger.log(
-              'Comparing vs po product with SupplierPartNo: ' + codeProductPO.SupplierPartNo,
+              `Comparing vs po product with SupplierPartNo: ${codeProductPO.SupplierPartNo}`,
             );
             return (
               codeProductPO.StockItem == codeProductInvoice ||
@@ -56,13 +58,13 @@ export class AppService {
             if (!poProductFound) {
               throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_CODE_MISSMATCH);
             }
-            this.logger.log('Items code ' + codeProductInvoice + ' match!');
+            this.logger.log(`Items code ${codeProductInvoice} match!`);
             this.logger.log('Comparing quantities...');
 
             const quantityProductInvoice = parseInt(row.ColumnValue[4].Item);
 
-            this.logger.log('PO product quantity: ' + poProductFound.Quantity);
-            this.logger.log('Invoice product quantity: ' + quantityProductInvoice);
+            this.logger.log(`PO product quantity: ${poProductFound.Quantity}`);
+            this.logger.log(`Invoice product quantity: ${quantityProductInvoice}`);
 
             if (poProductFound.Quantity !== quantityProductInvoice) {
               throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_QUANTITIES_MISSMATCH);
@@ -80,6 +82,6 @@ export class AppService {
   }
 
   private errorHandler(error: any) {
-    this.logger.log('Error in compareInvoiceAndPo: ' + error.message);
+    this.logger.log(`Error in compareInvoiceAndPo: ${error.message}`);
   }
 }
