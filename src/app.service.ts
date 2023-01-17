@@ -17,7 +17,7 @@ export class AppService {
     const jsonInvoices = invoices.data;
 
     this.logger.log('iterating over the array of invoices...');
-    jsonInvoices.body.forEach(async function (invoice) {
+    for (const invoice of jsonInvoices.body) {
       this.logger.log('getting the PO_NUMBER from the invoice...');
       const poNumber = invoice.Fields.find((i) => i.FieldName == 'PO_NUMBER');
       try {
@@ -35,8 +35,8 @@ export class AppService {
         //List of pruducts (lines/rows) in the invoice
         const listOfItems = invoice.Fields.find((items) => items.FieldName == 'ITEMS').Item.Row;
 
-        //Iterating list of products
-        listOfItems.forEach(async function (row) {
+        this.logger.log('iterating over the array of po items...');
+        for (const row of listOfItems) {
           const codeProductInvoice = row.ColumnValue[0].Item;
           const jsonPO = purchase_order.data[0];
 
@@ -66,11 +66,11 @@ export class AppService {
           } catch (error) {
             errorHandler(error);
           }
-        });
+        }
       } catch (error) {
         errorHandler(error);
       }
-    });
+    }
   }
 }
 
