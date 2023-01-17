@@ -1,6 +1,5 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { response } from 'express';
 import { ERROR_MESSAGE_ENUM } from './enums/error.enum';
 
 @Injectable()
