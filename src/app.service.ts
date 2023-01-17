@@ -41,12 +41,17 @@ export class AppService {
           const codeProductInvoice = row.ColumnValue[0].Item;
           const jsonPO = purchase_order.data[0];
 
-          this.logger.log('Comparing product with code: ' + codeProductInvoice);
-          const poProductFound = jsonPO.POPurchaseOrder.LineItems.find(
-            (codeProductPO) =>
+          this.logger.log('Comparing invoice product with code: ' + codeProductInvoice);
+          const poProductFound = jsonPO.POPurchaseOrder.LineItems.find((codeProductPO) => {
+            this.logger.log('Comparing vs po product with StockItem: ' + codeProductPO.StockItem);
+            this.logger.log(
+              'Comparing vs po product with SupplierPartNo: ' + codeProductPO.SupplierPartNo,
+            );
+            return (
               codeProductPO.StockItem == codeProductInvoice ||
-              codeProductPO.SupplierPartNo == codeProductInvoice,
-          );
+              codeProductPO.SupplierPartNo == codeProductInvoice
+            );
+          });
           try {
             if (!poProductFound) {
               throw new Error(ERROR_MESSAGE_ENUM.ERRORMESAGE_CODE_MISSMATCH);
